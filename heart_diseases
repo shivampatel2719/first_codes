@@ -1,0 +1,42 @@
+#importing files
+import pandas as pd
+import numpy as np
+#creating datasheet
+sheet=pd.read_csv('heart.csv')
+sheet.head()
+#assigning inputs and data
+x=sheet.iloc[:,:-1].values
+y=sheet.iloc[:,-1:].values
+#appending 1 to starting for [p] statsmodel summary to find relevant columns
+x=np.append(arr=np.ones((len(x),1)),values=x,axis=1)
+#importing stats model module
+import statsmodels.formula.api as sp
+#iteration of summary method and removing hightest [p] values until all [p]<0.05
+x_opt=x[:,range(13)]
+r_ols=sp.OLS(endog=y,exog=x_opt).fit()
+r_ols.summary()
+#after several iteration
+x_final=x[:,[2,3,4,8,9,10,11,12,13]]
+#importing classification modules
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score,classification_report
+from sklearn.cluster import KMeans
+#now making object of GaussianNB
+model=GaussianNB()
+#fitting modules to data
+model.fit(x_final,y)
+#predicting the o/p
+y_p=model.predict(x_final)
+#checking accuracy score
+print(accuracy_score(y,y_p))
+#accuracy score=0.8448844884488449
+#pretty good!!
+print(classification_report(y,y_p))
+#      precision    recall  f1-score   support
+
+#          0       0.85      0.80      0.82       138
+#          1       0.84      0.88      0.86       165
+
+#avg / total       0.85      0.84      0.84       303
+
+#This was type of supervised learning...
